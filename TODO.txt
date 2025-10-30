@@ -1,0 +1,2 @@
+1) Downlad the temperature data from Meteotrentino and recompute all the preprocessing pipelin
+2) Create the dataset by merge the solar system data and weather date 

@@ -89,7 +89,7 @@ def preprocess_solar_data(input_dir, output_csv):
 
 # === MAIN EXECUTION ===
 if __name__ == "__main__":
-    input_directory = Path("./raw_data_xlsx")  # folder with yearly Excel files
-    output_file = Path("./solar_power_merged.csv")
+    input_directory = Path("./raw")  # folder with yearly Excel files
+    output_file = Path("./solar_power_data.csv")
 
     preprocess_solar_data(input_directory, output_file)

@@ -125,7 +125,7 @@ if __name__ == "__main__":
         print("⚠️  No CSV files found in input directory.")
     else:
         for file in csv_files:
-            output_path = preprocessed_data_directory / f"weather_data"
+            output_path = preprocessed_data_directory  / f"{file.stem}_cleaned.csv"
             preprocess_hourly_data(file, output_path)
 
     print("\n🎉 All files processed successfully!")

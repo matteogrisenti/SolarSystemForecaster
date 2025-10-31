@@ -8,22 +8,20 @@ These two modules preprocess the raw data, which then are processed for the crea
 ```
 dataset/
 │
-├── README.md                          # This file
 ├── solar_system_data/                 # Solar production data collection
 ├── weather_data/                      # Weather data collection
 │ 
-├── dataset_preparation/               # Dataset creation and preparation
-│   ├── merged_data/                   # Merged solar + weather data
-│   ├── train_test_split/              # Split datasets
-│   │   ├── X_train.csv
-│   │   ├── X_test.csv
-│   │   ├── y_train.csv
-│   │   ├── y_test.csv
-│   │   ├── X_train_scaled.csv
-│   │   └── X_test_scaled.csv
-│   └── notebooks/
-│       └── dataset_preparation.ipynb  # Main dataset creation notebook
+├── dataset                            # CSV file with merged solar + weather data
+├── train_test_split/                  # Split datasets
+│   ├── X_train.csv
+│   ├── X_test.csv
+│   ├── y_train.csv
+│   ├── y_test.csv
+│   ├── X_train_scaled.csv
+│   └── X_test_scaled.csv
 │
+├── README.md                          # This file
+
 ```
 
 ## 📊 Dataset Information
@@ -31,15 +29,15 @@ dataset/
 ### Input Features (X)
 The weather/meteorological features used as input:
 
-| Feature | Description | Unit |
-|---------|-------------|------|
-| `air_temperature` | Ambient air temperature | °C   |
-| `humidity`        | Relative humidity       | %    |
-| `irradiance`      | Solar irradiance        | W/m² |
-| `pressure`        | Atmospheric pressure    | hPa  |
-| `rain`            | Precipitation amount    | mm   |
+| Feature           | Description             | Unit    |
+|-------------------|-------------------------|---------|
+| `air_temperature` | Ambient air temperature | °C      |
+| `humidity`        | Relative humidity       | %       |
+| `irradiance`      | Solar irradiance        | kJ/m²   |
+| `pressure`        | Atmospheric pressure    | hPa     |
+| `rain`            | Precipitation amount    | mm      |
 | `wind_direction`  | Wind direction          | degrees |
-| `wind_velocity`   | Wind speed              | m/s |
+| `wind_velocity`   | Wind speed              | m/s     |
 
 ### Target Variable (y)
 - `power`: Solar system power production in kW

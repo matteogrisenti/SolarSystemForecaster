@@ -1,6 +1,6 @@
 # Private Data of the Company 
-/dataset/solar_system_data/raw_data_xlsx
-/dataset/solar_system_data/solar_power_merged.csv
+/dataset/solar_system_data/raw
+/dataset/solar_system_data/solar_power_data.csv
 /dataset/dataset.csv
 /dataset/train_test_split
 

@@ -16,16 +16,7 @@ The pipeline performs:
 weather_pipeline/
 │
 ├── raw/ # 📥 Original raw CSV files
-│ ├── humidity.csv
-│ ├── temperature.csv
-│ ├── wind_speed.csv
-│ └── wind_direction.csv
-│
 ├── processed/ # ⚙️ Cleaned, hourly-aligned outputs
-│ ├── humidity_preprocessed.csv
-│ ├── temperature_preprocessed.csv
-│ ├── wind_speed_preprocessed.csv
-│ └── wind_direction_preprocessed.csv
 │
 ├── weather_data.csv # ✅ Unified dataset (one row per hour)
 │
@@ -71,8 +62,8 @@ python dataMerge.py
 ## 🧾 Summary of the Pipeline
 | Step | Script                       | Description                            | Output Folder               |
 | ---- | ---------------------------- | -------------------------------------- | --------------------------- |
-| 1️⃣  | `dataPreprocessing.py`       | Cleans and aligns each raw sensor file | `preprocessed_weather_csv/` |
-| 2️⃣  | `merge_preprocessed_data.py` | Merges all preprocessed files by hour  | `final_weather_dataset.csv` |
+| 1️⃣  | `dataPreprocessing.py`       | Cleans and aligns each raw sensor file | `processed/` |
+| 2️⃣  | `merge_preprocessed_data.py` | Merges all preprocessed files by hour  | `weather_data.csv` |
 
 
 ## 📈 Final Dataset Structure

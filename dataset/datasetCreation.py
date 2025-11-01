@@ -44,10 +44,10 @@ print("=" * 80)
 
 # Convert datetime columns to datetime type
 power_df['datetime'] = pd.to_datetime(power_df['datetime'])
-weather_df['hour'] = pd.to_datetime(weather_df['hour'])
+weather_df['datetime'] = pd.to_datetime(weather_df['datetime'])
 
 # Rename hour to datetime for consistency
-weather_df.rename(columns={'hour': 'datetime'}, inplace=True)
+weather_df.rename(columns={'datetime': 'datetime'}, inplace=True)
 
 # Sort by datetime
 power_df = power_df.sort_values('datetime').reset_index(drop=True)

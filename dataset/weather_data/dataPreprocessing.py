@@ -66,27 +66,35 @@ def preprocess_hourly_data(input_csv, output_csv):
         df = df.dropna(subset=["value"])
 
         # --- Step 5: Merge intra-hour duplicates ---
-        df["hour"] = df["datetime"].dt.floor("h")
-        df_hourly = df.groupby("hour", as_index=False)["value"].mean()
+        df["datetime"] = df["datetime"].dt.floor("h")
+        df_hourly = df.groupby("datetime", as_index=False)["value"].mean()
 
         # --- Step 6: Detect missing or invalid hours ---
-        start, end = df_hourly["hour"].min(), df_hourly["hour"].max()
+        start, end = df_hourly["datetime"].min(), df_hourly["datetime"].max()
         theoretical_range = pd.date_range(start=start, end=end, freq="h")
         theoretical_total = len(theoretical_range)
         
-        df_hourly = df_hourly.set_index("hour").reindex(theoretical_range)
+        df_hourly = df_hourly.set_index("datetime").reindex(theoretical_range)
         missing_hours = df_hourly[df_hourly.isna().any(axis=1)]
         removed_count = len(missing_hours)
-        df_clean = df_hourly.dropna().reset_index().rename(columns={"index": "hour", "value": "data"})
+        df_clean = df_hourly.dropna().reset_index().rename(columns={"index": "datetime", "value": "data"})
 
         # --- Step 7: Round numeric values ---
         df_clean["data"] = df_clean["data"].round(2)
 
-        # --- Step 8: Rename column dynamically ---
+        # --- Step 8: Add time components (hour, day, month) ---
+        df_clean["hour"] = df_clean["datetime"].dt.hour
+        df_clean["day"] = df_clean["datetime"].dt.day
+        df_clean["month"] = df_clean["datetime"].dt.month
+
+        # --- Step 9: Rename value column dynamically ---
         column_name = input_csv.stem  # file name without .csv
         df_clean = df_clean.rename(columns={"data": column_name})
 
-        # --- Step 9: Summary ---
+        # --- Step 10: Reorder columns for clarity ---
+        df_clean = df_clean[["datetime", "hour", "day", "month", column_name]]
+
+        # --- Step 11: Summary ---
         initial_count = len(df_hourly)
         remaining_count = len(df_clean)
 
@@ -98,7 +106,7 @@ def preprocess_hourly_data(input_csv, output_csv):
         print(f"Remaining valid samples: {remaining_count}")
         print("================================")
 
-        # --- Step 10: Save result ---
+        # --- Step 12: Save result ---
         df_clean.to_csv(output_csv, index=False)
         print(f"✅ Saved cleaned file: {output_csv}")
 

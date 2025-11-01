@@ -20,8 +20,11 @@ weather_pipeline/
 │
 ├── weather_data.csv # ✅ Unified dataset (one row per hour)
 │
-├── dataPreprocessing.py # Script 1: Clean & preprocess raw files
-├── dataMerge.py # Script 2: Merge all preprocessed files
+├── dataInspection.py      # Script 1: Inspect the data cleared
+├── dataPreprocessing.py    # Script 2: Clean & preprocess raw files
+├── dataMerge.py            # Script 3: Merge all preprocessed files
+│
+├── data_inspection.txt     # inspection summary of the cleared data
 └── README.md # 📘 Documentation (this file)
 ```
 

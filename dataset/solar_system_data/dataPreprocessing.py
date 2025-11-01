@@ -42,18 +42,48 @@ def preprocess_solar_data(input_dir, output_csv):
         # Drop completely empty rows
         df = df.dropna(subset=["datetime", "power"])
 
-        # Parse datetime
-        df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
+        # Parse datetime with day-first logic
+        # This prevents month/day inversion (like 12/01/2020 being read as Dec 1 instead of Jan 12)
+        df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce", dayfirst=True)
         df = df.dropna(subset=["datetime"])
 
-        # --- Quality control ---
+
+        # --- REMOTION OF OUTLIERS OR DUPLICATED DATETIME ---
         initial_len = len(df)
 
-        # Remove invalid or impossible values (e.g., negative or too high)
-        df = df[(df["power"] >= 0) & (df["power"] < 2000)]
+        # Remove invalid or impossible power values (e.g., negative or too high)
+        invalid_mask = (df["power"] < 0) | (df["power"] >= 2000)
+        print(f"🗑️  Removed invalid/outliers: {invalid_mask.sum()}")
+        df = df[~invalid_mask]
 
         # Remove duplicates
+        duplicate_removed = df.duplicated(subset=["datetime"]).sum()
+        print(f"🗑️  Removed duplicates: {duplicate_removed}")
         df = df.drop_duplicates(subset=["datetime"], keep="first")
+
+    
+
+        # --- RECOVER THE MISSING DATETIME --
+        # Recover missing date point during the night 22:00-5:00 and add to the data with power 0
+        full_range = pd.date_range(start=df["datetime"].min(), end=df["datetime"].max(), freq="h")
+        missing_times = full_range.difference(df["datetime"])          # Identify missing timestamps
+
+        # Prepare nighttime filler rows
+        fill_rows = []
+        for t in missing_times:
+            hour = t.hour
+            # Nighttime range: 22:00–05:00
+            if hour >= 22 or hour <= 5:
+                fill_rows.append({"datetime": t, "power": 0})
+
+        # Add missing nighttime rows
+        if fill_rows:
+            df = pd.concat([df, pd.DataFrame(fill_rows)], ignore_index=True)
+            df = df.sort_values("datetime").reset_index(drop=True)
+            # Show which hours were filled
+            night_hours = sorted(set([t.hour for t in missing_times if t.hour >= 22 or t.hour <= 5]))
+            print(f"🌙 Added {len(fill_rows)} nighttime (22:00-5:00) missing rows (set to 0).")
+
 
         # Sort chronologically
         df = df.sort_values("datetime").reset_index(drop=True)

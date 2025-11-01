@@ -5,3 +5,5 @@ pathlib
 matplotlib
 seaborn
 scikit-learn
+tensorflow 
+ipykernel

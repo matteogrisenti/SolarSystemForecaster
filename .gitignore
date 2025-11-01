@@ -7,3 +7,7 @@
 
 /.venv
 
+
+# Chackpoit models
+/FFN/checkpoint
+

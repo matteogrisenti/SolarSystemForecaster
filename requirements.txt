@@ -1,7 +1,8 @@
-pandas 
-openpyxl 
+pandas
+openpyxl
 numpy
 pathlib
 matplotlib
 seaborn
 scikit-learn
+autogluon.timeseries

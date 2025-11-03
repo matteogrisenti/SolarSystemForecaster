@@ -81,7 +81,6 @@ print("\nMerged data sample:")
 print(df.head(10))
 
 
-
 # ============================================================================
 # 4. EXPLORATORY DATA ANALYSIS
 # ============================================================================
@@ -183,6 +182,16 @@ if df_clean.isnull().sum().sum() > 0:
     print(f"Dataset shape after removing NaN: {df_clean.shape}")
 
 
+# ============================================================================
+# 6. SAVE DATASET
+# ============================================================================
+
+df_clean.to_csv('merged_solar_weather_data_cleaned.csv', index=False)
+
+
+
+"""
+
 
 # ============================================================================
 # 6. PREPARE FEATURES AND TARGET
@@ -208,7 +217,6 @@ print(f"\nFeatures used: {len(feature_cols)}")
 print(feature_cols)
 
 
-
 # ============================================================================
 # 7. TRAIN-TEST SPLIT
 # ============================================================================
@@ -232,7 +240,6 @@ print(f"\nTraining set size: {len(X_train)} samples")
 print(f"Test set size: {len(X_test)} samples")
 print(f"Training period: {datetime_train.min()} to {datetime_train.max()}")
 print(f"Test period: {datetime_test.min()} to {datetime_test.max()}")
-
 
 
 # ============================================================================
@@ -330,3 +337,5 @@ plt.show()
 print("\n" + "=" * 80)
 print("DATASET PREPARATION COMPLETED!")
 print("=" * 80)
+
+"""

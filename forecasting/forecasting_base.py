@@ -2,7 +2,6 @@ import os
 from autogluon.timeseries import TimeSeriesDataFrame, TimeSeriesPredictor
 import pandas as pd
 import numpy as np
-from autogluon.timeseries import TimeSeriesDataFrame, TimeSeriesPredictor
 import matplotlib.pyplot as plt
 from datetime import datetime
 
@@ -52,13 +51,19 @@ def create_timeseries_dataframe(df, datetime_column='datetime', target='power'):
     df['item_id'] = 'solar_panel_prediction'  # Add item_id for single series
     
     # Reorder columns: item_id, timestamp, target, features
-    feature_cols = ['air_temperature', 'humidity', 'irradiance', 
-                    'pressure', 'rain', 
-                    'is_day', 'season',
-                   #'wind_u', 'wind_v',
-                    'wind_velocity',
-                   'wind_direction'
-                   ]
+    feature_cols = [
+        'irradiance',           
+            'hour',                 
+            'air_temperature',      
+            'humidity',
+            'pressure',
+            'wind_velocity',
+            'wind_direction',
+            'rain',
+            'month',
+            'day_of_week',
+    ]#is_day, wind_u, wind_v
+    
     
     cols = ['item_id', datetime_column, target] + feature_cols
     df = df[cols]
@@ -73,24 +78,6 @@ def create_timeseries_dataframe(df, datetime_column='datetime', target='power'):
     return ts_df
 
 # ============================================================================
-# TRAIN-TEST SPLIT
-# ============================================================================
-
-def split_train_test(ts_df, test_size=0.2):
-    """
-    Split time series data into train and test sets
-    """
-    # Calculate split point
-    total_length = len(ts_df)
-    train_length = int(total_length * (1 - test_size))
-    
-    # Split data
-    train_data = ts_df.head(train_length)
-    test_data = ts_df.tail(total_length - train_length)
-    
-    return train_data, test_data
-
-# ============================================================================
 # TRAIN MODEL WITH CHRONOS
 # ============================================================================
 
@@ -98,36 +85,52 @@ def train_model(train_data, prediction_length=24, time_limit=600):
     predictor = TimeSeriesPredictor(
         path="autogluon-solar-forecast",
         prediction_length=prediction_length,
-        eval_metric="sMAPE",
+        eval_metric="MASE",
         target="power",
         known_covariates_names=[
-                'air_temperature', 'humidity', 'irradiance', 
-                    'pressure', 'rain',
-                    'is_day', 'season',
-                   #'wind_u', 'wind_v',
-                    'wind_velocity',
-                   'wind_direction'
-        ]
+        'irradiance',           
+            'hour',                 
+            'air_temperature',      
+            'humidity',
+            'pressure',
+            'wind_velocity',
+            'wind_direction',
+            'rain',
+            'month',
+            'day_of_week',
+    ]#is_day, wind_u, wind_v
     ).fit(
         train_data,
         presets="best_quality",
         hyperparameters={
             "Chronos": [
-                # Zero-shot model WITHOUT covariates
+                #{"model_path": "bolt_base", "ag_args": {"name_suffix": "ZeroShot"}},
                 {
-                    "model_path": "bolt_small",
-                    "ag_args": {"name_suffix": "ZeroShot"},
-                },
-                # Chronos-Bolt (Small) combined with CatBoost on covariates
-                {
-                    "model_path": "bolt_small",
-                    "covariate_regressor": "CAT",
+                    "model_path": "bolt_base",  # Modello più grande
+                    "fine_tune": True,
+                    "covariate_regressor": "XGB",
                     "target_scaler": "standard",
-                    "ag_args": {"name_suffix": "WithRegressor"},
+                    "context_length": 168,  # 1 settimana di dati orari (24*28)
+                    "ag_args": {
+                        "name_suffix": "XGB",
+                    },
+                },
+                #Configurazione alternativa con CAT
+                {
+                    "model_path": "bolt_base",
+                    "fine_tune": True,
+                    "covariate_regressor": "CAT",
+                    "target_scaler": "robust",  # Gestisce meglio gli outliers
+                    "context_length": 168,
+                    "ag_args": {
+                        "name_suffix": "CAT",
+                    },
                 },
             ],
         },
-        enable_ensemble=False,
+        enable_ensemble=True,  # Combina i due approcci
+        #ensemble_type="weighted",  # Ensemble pesato
+        num_val_windows=1,  # Più robusto
         #time_limit=120,
     )
 
@@ -204,7 +207,6 @@ def plot_predictions(test_data, predictions):
     plt.show()
 
 
-
 def main():
     """
     Main execution function
@@ -216,7 +218,7 @@ def main():
     # Configuration
     DATA_PATH = 'merged_solar_weather_data_cleaned.csv'  # UPDATE THIS PATH
     TIMESTAMP_COL = 'datetime'   # UPDATE IF DIFFERENT
-    PREDICTION_LENGTH = 192        # Forecast 192 time steps ahead
+    PREDICTION_LENGTH = 72        # Forecast 192 time steps ahead
     TEST_SIZE = 0.2               # 20% for testing
     TIME_LIMIT = 600              # 10 minutes training time
     
@@ -226,7 +228,7 @@ def main():
     print(f"   Data shape: {df.shape}")
     print(f"   Date range: {df[TIMESTAMP_COL].min()} to {df[TIMESTAMP_COL].max()}")
 
-    # Add is_day-hour and season columns
+    # Add is_day-hour and season columns 
     df=add_time_and_season_columns(df, timestamp_column=TIMESTAMP_COL)
     
     # Process wind data → Resta uguale/peggiora (da rivedere)
@@ -242,18 +244,16 @@ def main():
     train_data, test_data = ts_df.train_test_split(prediction_length)
 
     predictor=train_model(train_data=train_data, prediction_length=PREDICTION_LENGTH, time_limit=TIME_LIMIT)
+
+    models = predictor.model_names()
     
-
-    print("LEADERBOARD:")
-    print(predictor.leaderboard(test_data))
-
-    models=['ChronosZeroShot[bolt_small]', 'ChronosWithRegressor[bolt_small]']
-
     predictions=evaluate_model(train_data=train_data, test_data=test_data, models_name=models, predictor=predictor)
 
     plot_predictions(test_data=test_data, predictions=predictions)
 
-
+    print("LEADERBOARD:")
+    print(predictor.leaderboard(test_data))
+    
 
 if __name__ == "__main__":
     main()

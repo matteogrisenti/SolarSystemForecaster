@@ -3,7 +3,17 @@
 /dataset/solar_system_data/solar_power_data.csv
 /dataset/dataset.csv
 /dataset/train_test_split
+forecasting\autogluon-solar-forecast
+forecasting/autogluon-solar-forecast
+forecast/data_analysis
+forecast/AutogluonModels
+forecasting/dataset_analysis
+forecasting/handle_missing_value.csv
+forecasting/merged_solar_weather_data_cleaned.csv
 
+__pycache__/
 
 /.venv
-
+venv312
+/.venv312
+/forecast/dataset_analysis

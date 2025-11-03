@@ -8,14 +8,25 @@ import seaborn as sns
 
 def add_time_and_season_columns(df, timestamp_column='datetime'):
     """
-    Add two columns to the dataframe:
-    - 'is_day': boolean indicating if the time is during day (6-18) or night
+    Add temporal columns to the dataframe:
+    - 'month': month number (1-12)
+    - 'day_of_week': day of the week (1-7, where 1=Monday)
+    - 'hour': hour of the day (0-23)
     - 'season': string indicating the season (spring, summer, autumn, winter)
     """
     df = df.copy()
     
-    # Add is_day column (True if daytime, False if nighttime)
-    df['is_day'] = df[timestamp_column].dt.hour.between(6, 18)
+    # Ensure the timestamp column is in datetime format
+    df[timestamp_column] = pd.to_datetime(df[timestamp_column])
+    
+    # Add month column (1-12)
+    df['month'] = df[timestamp_column].dt.month
+    
+    # Add day of week column (1-7, where 1=Monday, 7=Sunday)
+    df['day_of_week'] = df[timestamp_column].dt.dayofweek + 1
+    
+    # Add hour column (0-23)
+    df['hour'] = df[timestamp_column].dt.hour
     
     # Add season column based on month
     def get_season(month):
@@ -28,7 +39,7 @@ def add_time_and_season_columns(df, timestamp_column='datetime'):
         else:  # 9, 10, 11
             return 'autumn'
     
-    df['season'] = df[timestamp_column].dt.month.apply(get_season)
+    #df['season'] = df['month'].apply(get_season)
     
     return df
 

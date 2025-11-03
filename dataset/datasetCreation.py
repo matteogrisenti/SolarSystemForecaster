@@ -46,9 +46,6 @@ print("=" * 80)
 power_df['datetime'] = pd.to_datetime(power_df['datetime'])
 weather_df['datetime'] = pd.to_datetime(weather_df['datetime'])
 
-# Rename hour to datetime for consistency
-weather_df.rename(columns={'datetime': 'datetime'}, inplace=True)
-
 # Sort by datetime
 power_df = power_df.sort_values('datetime').reset_index(drop=True)
 weather_df = weather_df.sort_values('datetime').reset_index(drop=True)
@@ -194,8 +191,7 @@ print("=" * 80)
 
 # Use only raw weather features
 feature_cols = [
-    'air_temperature', 'humidity', 'irradiance', 'pressure', 'rain',
-    'wind_direction', 'wind_velocity'
+    'power', 'hour', 'day', 'month', 'air_temperature', 'humidity', 'irradiance', 'pressure', 'rain', 'wind_direction', 'wind_velocity'
 ]
 
 X = df_clean[feature_cols]

@@ -11,8 +11,7 @@ The pipeline performs:
 ---
 
 ## 📁 Project Structure
-
-```bash
+```
 weather_pipeline/
 │
 ├── raw/ # 📥 Original raw CSV files

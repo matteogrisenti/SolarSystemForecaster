@@ -9,9 +9,6 @@ These two modules preprocess the raw data, which then are processed for the crea
 dataset/
 │
 ├── solar_system_data/                 # Solar production data collection
-├── weather_data/                      # Weather data collection
-│ 
-├── dataset                            # CSV file with merged solar + weather data
 ├── train_test_split/                  # Split datasets
 │   ├── X_train.csv
 │   ├── X_test.csv
@@ -19,8 +16,13 @@ dataset/
 │   ├── y_test.csv
 │   ├── X_train_scaled.csv
 │   └── X_test_scaled.csv
+├── weather_data/                      # Weather data collection
+│ 
+├── dataset                            # CSV file with merged solar + weather data
+├── datasetCreation.py                 # Merge Solar Production $ Weather datacollection
 │
 ├── README.md                          # This file
+├── scaler.pkl                         # Scaler used for input scaling
 
 ```
 
@@ -31,6 +33,9 @@ The weather/meteorological features used as input:
 
 | Feature           | Description             | Unit    |
 |-------------------|-------------------------|---------|
+| `hour`            | hour (0-23)             |         |
+| `day`             | day number (1-31)       |         |
+| `month`           | month number (1-12)     |         |
 | `air_temperature` | Ambient air temperature | °C      |
 | `humidity`        | Relative humidity       | %       |
 | `irradiance`      | Solar irradiance        | kJ/m²   |

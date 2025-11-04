@@ -6,6 +6,8 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import warnings
+import joblib
+
 warnings.filterwarnings('ignore')
 
 # Set style for better visualizations
@@ -191,7 +193,7 @@ print("=" * 80)
 
 # Use only raw weather features
 feature_cols = [
-    'power', 'hour', 'day', 'month', 'air_temperature', 'humidity', 'irradiance', 'pressure', 'rain', 'wind_direction', 'wind_velocity'
+    'hour', 'day', 'month', 'air_temperature', 'humidity', 'irradiance', 'pressure', 'rain', 'wind_direction', 'wind_velocity'
 ]
 
 X = df_clean[feature_cols]
@@ -252,6 +254,10 @@ print("\nFeature scaling completed!")
 print(f"Scaled training set shape: {X_train_scaled.shape}")
 print(f"Scaled test set shape: {X_test_scaled.shape}")
 
+# Save the fitted scaler
+joblib.dump(scaler, "scaler.pkl")
+print("Scaler saved to scaler.pkl")
+
 
 
 # ============================================================================
@@ -263,6 +269,7 @@ print("STEP 9: Saving Processed Data")
 print("=" * 80)
 
 # Define the output directory
+output_csv = "dataset.csv"
 output_dir = "train_test_split"
 
 # Intelligently create the directory if it doesn't exist
@@ -283,6 +290,7 @@ paths = {
 }
 
 # Save the processed datasets
+df_clean.to_csv(output_csv, index=False)
 X_train.to_csv(paths["X_train"], index=False)
 X_test.to_csv(paths["X_test"], index=False)
 y_train.to_csv(paths["y_train"], index=False)

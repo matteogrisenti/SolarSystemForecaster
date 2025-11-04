@@ -103,14 +103,35 @@ def train_model(train_data, prediction_length=24, time_limit=600):
         train_data,
         presets="best_quality",
         hyperparameters={
+            "TemporalFusionTransformerModel":
+            [
+                {
+                    "fine_tune": True,
+                    "covariate_regressor": "XGB",
+                    "target_scaler": "standard",
+                    "context_length": 192,  # 1 settimana di dati orari (24*28)
+                    "ag_args": {
+                        "name_suffix": "XGB",
+                    },
+                },
+                {
+                    "fine_tune": True,
+                    "covariate_regressor": "CAT",
+                    "target_scaler": "standard",
+                    "context_length": 192,  # 1 settimana di dati orari (24*28)
+                    "ag_args": {
+                        "name_suffix": "CAT",
+                    },
+                }
+            ],
             "Chronos": [
-                #{"model_path": "bolt_base", "ag_args": {"name_suffix": "ZeroShot"}},
+                #{"model_path": "bolt_base", "fine_tune": True, "ag_args": {"name_suffix": "ZeroShot"}},
                 {
                     "model_path": "bolt_base",  # Modello più grande
                     "fine_tune": True,
                     "covariate_regressor": "XGB",
                     "target_scaler": "standard",
-                    "context_length": 168,  # 1 settimana di dati orari (24*28)
+                    "context_length": 192,  # 1 settimana di dati orari (24*28)
                     "ag_args": {
                         "name_suffix": "XGB",
                     },
@@ -121,7 +142,7 @@ def train_model(train_data, prediction_length=24, time_limit=600):
                     "fine_tune": True,
                     "covariate_regressor": "CAT",
                     "target_scaler": "robust",  # Gestisce meglio gli outliers
-                    "context_length": 168,
+                    "context_length": 192,
                     "ag_args": {
                         "name_suffix": "CAT",
                     },
@@ -218,7 +239,7 @@ def main():
     # Configuration
     DATA_PATH = 'merged_solar_weather_data_cleaned.csv'  # UPDATE THIS PATH
     TIMESTAMP_COL = 'datetime'   # UPDATE IF DIFFERENT
-    PREDICTION_LENGTH = 72        # Forecast 192 time steps ahead
+    PREDICTION_LENGTH = 192        # Forecast 192 time steps ahead
     TEST_SIZE = 0.2               # 20% for testing
     TIME_LIMIT = 600              # 10 minutes training time
     

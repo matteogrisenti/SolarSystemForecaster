@@ -5,7 +5,7 @@
 /dataset/dataset.csv
 /dataset/train_test_split
 
-
+.env
 /.venv
 **/__pycache__/
 

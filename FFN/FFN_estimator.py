@@ -71,7 +71,7 @@ class SolarPowerEstimator:
     def _load_scaler(self):
         try:
             self.scaler = joblib.load(self.scaler_path)
-            print(getattr(self.scaler, 'feature_names_in_', None))
+            # print(getattr(self.scaler, 'feature_names_in_', None))
             print(f"✅ Scaler loaded successfully from {os.path.abspath(self.scaler_path)}")
         except Exception as e:
             raise RuntimeError(f"Failed to load scaler from {self.scaler_path}: {str(e)}")
@@ -189,14 +189,32 @@ class SolarPowerEstimator:
             X = self._validate_input(data)
         else:
             # Check if all individual parameters are provided
-            params = [hour, day, month, air_temperature, humidity, irradiance, pressure, 
-                     rain, wind_direction, wind_velocity]
-            if None in params:
+            params_dict = {
+                'hour': hour,
+                'day': day,
+                'month': month,
+                'air_temperature': air_temperature,
+                'humidity': humidity,
+                'irradiance': irradiance,
+                'pressure': pressure,
+                'rain': rain,
+                'wind_direction': wind_direction,
+                'wind_velocity': wind_velocity
+            }
+
+            # Debug: print all parameters
+            print("Debug: Individual parameters provided:")
+            for name, value in params_dict.items():
+                print(f"  {name}: {value}")
+            
+            # Find which parameters are missing
+            missing_params = [name for name, value in params_dict.items() if value is None]
+            
+            if missing_params:
                 raise ValueError(
-                    "Either provide all individual parameters or use 'data' parameter"
+                    f"Missing required parameter(s): {', '.join(missing_params)}. "
+                    f"Either provide all individual parameters or use the 'data' parameter."
                 )
-            X = np.array([[hour, day, month, air_temperature, humidity, irradiance, pressure, 
-               rain, wind_direction, wind_velocity]])
         
         # Scale the input
         X_scaled = self.scaler.transform(X)

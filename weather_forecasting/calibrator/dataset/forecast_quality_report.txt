@@ -1,0 +1,261 @@
+================================================================================
+METEOROLOGICAL FORECAST QUALITY EVALUATION REPORT
+================================================================================
+
+Report Generated: 2025-11-06 13:11:15
+Evaluation Period: 2024-11-04 00:00:00 to 2025-10-28 00:00:00
+Total Records Evaluated: 8593
+
+================================================================================
+OVERALL SUMMARY
+================================================================================
+
+Feature              MAE          RMSE         Correlation  R²          
+--------------------------------------------------------------------------------
+air_temperature      1.3670       1.7567       0.9799       0.9588      
+humidity             8.3907       10.7073      0.8547       0.7301      
+irradiance           452.3960     801.1381     0.9106       -12.8604    
+pressure             2.9121       2.9968       0.9958       0.8358      
+rain                 0.0861       0.7068       0.2771       -131.3546   
+wind_direction       115.4398     148.1311     0.0839       -1.3416     
+wind_velocity        0.8135       1.1603       0.6542       0.3691      
+
+
+================================================================================
+FEATURE: AIR_TEMPERATURE
+================================================================================
+
+Error Metrics:
+----------------------------------------
+  Mean Absolute Error (MAE):           1.3670
+  Root Mean Square Error (RMSE):       1.7567
+  Mean Absolute Percentage Error:      1047364177.77%
+  Bias (Systematic Error):             -0.2982
+    -> Tendency to UNDER-predict
+
+Statistical Performance:
+----------------------------------------
+  Correlation Coefficient:             0.9799
+  R² Score:                            0.9588
+
+Accuracy Analysis:
+----------------------------------------
+  Within 5% of actual:                 32.76%
+  Within 10% of actual:                54.07%
+
+Extreme Errors:
+----------------------------------------
+  Maximum Absolute Error:              6.9200
+  Maximum Over-prediction:             6.9200
+  Maximum Under-prediction:            -6.8000
+
+
+================================================================================
+FEATURE: HUMIDITY
+================================================================================
+
+Error Metrics:
+----------------------------------------
+  Mean Absolute Error (MAE):           8.3907
+  Root Mean Square Error (RMSE):       10.7073
+  Mean Absolute Percentage Error:      13.30%
+  Bias (Systematic Error):             0.4108
+    -> Tendency to OVER-predict
+
+Statistical Performance:
+----------------------------------------
+  Correlation Coefficient:             0.8547
+  R² Score:                            0.7301
+
+Accuracy Analysis:
+----------------------------------------
+  Within 5% of actual:                 28.87%
+  Within 10% of actual:                53.00%
+
+Extreme Errors:
+----------------------------------------
+  Maximum Absolute Error:              46.0000
+  Maximum Over-prediction:             46.0000
+  Maximum Under-prediction:            -38.0000
+
+
+================================================================================
+FEATURE: IRRADIANCE
+================================================================================
+
+Error Metrics:
+----------------------------------------
+  Mean Absolute Error (MAE):           452.3960
+  Root Mean Square Error (RMSE):       801.1381
+  Mean Absolute Percentage Error:      3429112069052.60%
+  Bias (Systematic Error):             451.2644
+    -> Tendency to OVER-predict
+
+Statistical Performance:
+----------------------------------------
+  Correlation Coefficient:             0.9106
+  R² Score:                            -12.8604
+
+Accuracy Analysis:
+----------------------------------------
+  Within 5% of actual:                 44.91%
+  Within 10% of actual:                45.21%
+
+Extreme Errors:
+----------------------------------------
+  Maximum Absolute Error:              2744.2000
+  Maximum Over-prediction:             2744.2000
+  Maximum Under-prediction:            -191.3000
+
+
+================================================================================
+FEATURE: PRESSURE
+================================================================================
+
+Error Metrics:
+----------------------------------------
+  Mean Absolute Error (MAE):           2.9121
+  Root Mean Square Error (RMSE):       2.9968
+  Mean Absolute Percentage Error:      0.29%
+  Bias (Systematic Error):             2.9119
+    -> Tendency to OVER-predict
+
+Statistical Performance:
+----------------------------------------
+  Correlation Coefficient:             0.9958
+  R² Score:                            0.8358
+
+Accuracy Analysis:
+----------------------------------------
+  Within 5% of actual:                 100.00%
+  Within 10% of actual:                100.00%
+
+Extreme Errors:
+----------------------------------------
+  Maximum Absolute Error:              6.1200
+  Maximum Over-prediction:             6.1200
+  Maximum Under-prediction:            -0.7200
+
+
+================================================================================
+FEATURE: RAIN
+================================================================================
+
+Error Metrics:
+----------------------------------------
+  Mean Absolute Error (MAE):           0.0861
+  Root Mean Square Error (RMSE):       0.7068
+  Mean Absolute Percentage Error:      26230652937.16%
+  Bias (Systematic Error):             0.0790
+    -> Tendency to OVER-predict
+
+Statistical Performance:
+----------------------------------------
+  Correlation Coefficient:             0.2771
+  R² Score:                            -131.3546
+
+Accuracy Analysis:
+----------------------------------------
+  Within 5% of actual:                 89.85%
+  Within 10% of actual:                89.86%
+
+Extreme Errors:
+----------------------------------------
+  Maximum Absolute Error:              28.0300
+  Maximum Over-prediction:             28.0300
+  Maximum Under-prediction:            -2.9700
+
+
+================================================================================
+FEATURE: WIND_DIRECTION
+================================================================================
+
+Error Metrics:
+----------------------------------------
+  Mean Absolute Error (MAE):           115.4398
+  Root Mean Square Error (RMSE):       148.1311
+  Mean Absolute Percentage Error:      10086232980464.94%
+  Bias (Systematic Error):             -21.9073
+    -> Tendency to UNDER-predict
+
+Statistical Performance:
+----------------------------------------
+  Correlation Coefficient:             0.0839
+  R² Score:                            -1.3416
+
+Accuracy Analysis:
+----------------------------------------
+  Within 5% of actual:                 6.66%
+  Within 10% of actual:                12.25%
+
+Extreme Errors:
+----------------------------------------
+  Maximum Absolute Error:              360.0000
+  Maximum Over-prediction:             360.0000
+  Maximum Under-prediction:            -340.8300
+
+
+================================================================================
+FEATURE: WIND_VELOCITY
+================================================================================
+
+Error Metrics:
+----------------------------------------
+  Mean Absolute Error (MAE):           0.8135
+  Root Mean Square Error (RMSE):       1.1603
+  Mean Absolute Percentage Error:      39752123951.96%
+  Bias (Systematic Error):             -0.2506
+    -> Tendency to UNDER-predict
+
+Statistical Performance:
+----------------------------------------
+  Correlation Coefficient:             0.6542
+  R² Score:                            0.3691
+
+Accuracy Analysis:
+----------------------------------------
+  Within 5% of actual:                 3.95%
+  Within 10% of actual:                8.25%
+
+Extreme Errors:
+----------------------------------------
+  Maximum Absolute Error:              8.2900
+  Maximum Over-prediction:             8.2900
+  Maximum Under-prediction:            -6.5100
+
+
+================================================================================
+QUALITY ASSESSMENT
+================================================================================
+
+air_temperature:
+  Overall Quality: EXCELLENT
+  ! High percentage error - review forecasting model
+
+humidity:
+  Overall Quality: GOOD
+
+irradiance:
+  Overall Quality: NEEDS IMPROVEMENT
+  ! Significant bias detected - consider calibration
+  ! High percentage error - review forecasting model
+
+pressure:
+  Overall Quality: EXCELLENT
+  ! Significant bias detected - consider calibration
+
+rain:
+  Overall Quality: NEEDS IMPROVEMENT
+  ! Significant bias detected - consider calibration
+  ! High percentage error - review forecasting model
+  ! Low correlation - forecast may not capture actual patterns
+
+wind_direction:
+  Overall Quality: NEEDS IMPROVEMENT
+  ! High percentage error - review forecasting model
+  ! Low correlation - forecast may not capture actual patterns
+
+wind_velocity:
+  Overall Quality: NEEDS IMPROVEMENT
+  ! High percentage error - review forecasting model
+

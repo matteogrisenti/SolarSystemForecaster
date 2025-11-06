@@ -17,6 +17,22 @@ import json
 import os
 from datetime import datetime
 import pickle
+import logging
+
+
+# Configure logging
+logger = logging.getLogger("calibration")
+logger.setLevel(logging.INFO)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+formatter = logging.Formatter("WEATHER FORECAST - CLIBRATION - %(levelname)s - %(message)s")
+ch.setFormatter(formatter)
+
+# Add handler if it hasn't been added yet
+if not logger.hasHandlers():
+    logger.addHandler(ch)
 
 
 class ForecastCalibrator:
@@ -45,6 +61,7 @@ class ForecastCalibrator:
         self.training_date = None
         self.training_samples = 0
     
+
     def train(self, forecast_df, actual_df, matching_columns=['date', 'hour']):
         """
         Train calibration by comparing forecast vs actual data distributions.
@@ -104,6 +121,7 @@ class ForecastCalibrator:
         
         return self.statistics
     
+
     def _train_parameter(self, param, forecast_vals, actual_vals):
         """
         Train calibration for a single parameter using distribution matching.
@@ -187,63 +205,96 @@ class ForecastCalibrator:
         print(f"    RMSE: {rmse_original:.4f} → {rmse_calibrated:.4f} ({rmse_improvement:+.1f}%)")
         print(f"    Bias: {bias_original:.4f} → {bias_calibrated:.4f}")
     
-    def calibrate(self, forecast_df):
+
+    def calibrate(self, forecast_df, verbose=1):
         """
         Apply calibration to new forecast data.
         
         Args:
-            forecast_df: DataFrame with forecast data to calibrate
+            forecast_df (pd.DataFrame): DataFrame with forecast data to calibrate.
+            verbose (int): Verbosity level:
+                0 - No output
+                1 - Summary only
+                2 - Detailed output for each parameter.
         
         Returns:
-            DataFrame: Calibrated forecast data with original values preserved
+            pd.DataFrame: Calibrated forecast data with original values preserved.
         """
         
         if not self.is_trained:
             raise ValueError("Calibrator must be trained before calibrating forecasts!")
-        
+
         calibrated_df = forecast_df.copy()
+
+        if verbose >= 1:
+            logger.info("Applying Distribution-Based Calibration")
         
-        print("\n" + "=" * 70)
-        print("Applying Distribution-Based Calibration")
-        print("=" * 70)
-        
+        summary = []
+
         for param in self.PARAMETERS:
             if param not in self.calibration_params:
                 continue
             
             if param not in calibrated_df.columns:
-                print(f"\n⚠ Skipping {param} - not found in forecast data")
+                if verbose >= 2:
+                    logger.warning(f"⚠ Skipping {param} - not found in forecast data")
                 continue
             
-            # Get valid values
             mask = calibrated_df[param].notna()
             values = calibrated_df.loc[mask, param].values
             
             if len(values) == 0:
                 continue
-            
-            # Store original values
-            calibrated_df[f"{param}_original"] = calibrated_df[param]
-            
-            # Apply distribution-based calibration
+
+             # Ensure the column is float
+            if not np.issubdtype(calibrated_df[param].dtype, np.floating):
+                calibrated_df[param] = calibrated_df[param].astype(float)
+
+            # Apply calibration
             params = self.calibration_params[param]
-            calibrated_values = (values - params['mean_forecast']) * \
-                               params['scaling_factor'] + params['mean_actual']
+            calibrated_values = (
+                (values - params['mean_forecast']) * params['scaling_factor'] 
+                + params['mean_actual']
+            )
             
             calibrated_df.loc[mask, param] = calibrated_values
             
-            # Print adjustment info
+            # Compute adjustment stats
             adjustment = calibrated_values - values
-            print(f"\n{param}:")
-            print(f"  Adjusted {mask.sum()} values")
-            print(f"  Mean adjustment: {adjustment.mean():.4f}")
-            print(f"  Std adjustment: {adjustment.std():.4f}")
-            print(f"  Range: [{adjustment.min():.4f}, {adjustment.max():.4f}]")
+            mean_adj = adjustment.mean()
+            std_adj = adjustment.std()
+            min_adj = adjustment.min()
+            max_adj = adjustment.max()
+            
+            summary.append({
+                "param": param,
+                "count": mask.sum(),
+                "mean_adj": mean_adj,
+                "std_adj": std_adj,
+                "min_adj": min_adj,
+                "max_adj": max_adj
+            })
+            
+            if verbose >= 2:
+                print('')
+                logger.info(f"{param}:")
+                logger.info(f"  Adjusted {mask.sum()} values")
+                logger.info(f"  Mean adjustment: {mean_adj:.4f}")
+                logger.info(f"  Std adjustment: {std_adj:.4f}")
+                logger.info(f"  Range: [{min_adj:.4f}, {max_adj:.4f}]")
         
-        print("\n✓ Calibration applied!")
-        
+        if verbose >= 1:
+            print('')
+            logger.info("✓ Calibration applied!")
+            if summary and verbose == 1:
+                print('')
+                logger.info("Summary of Adjustments:")
+                for s in summary:
+                    logger.info(f"  {s['param']}: mean={s['mean_adj']:.4f}, std={s['std_adj']:.4f}")
+
         return calibrated_df
-    
+
+
     def save(self, filename='forecast_calibrator.pkl'):
         """
         Save calibrator to file.
@@ -267,9 +318,10 @@ class ForecastCalibrator:
         with open(filename, 'wb') as f:
             pickle.dump(save_data, f)
         
-        print(f"\n✓ Calibrator saved to {filename}")
+        logger.info(f"\n✓ Calibrator saved to {filename}")
     
-    def load(self, filename='forecast_calibrator.pkl'):
+
+    def load(self, filename='forecast_calibrator.pkl', verbose=1):
         """
         Load calibrator from file.
         
@@ -289,12 +341,11 @@ class ForecastCalibrator:
         self.training_samples = data['training_samples']
         self.is_trained = True
         
-        print(f"\n✓ Calibrator loaded from {filename}")
-        print(f"  Method: Distribution matching")
-        print(f"  Trained on: {self.training_date}")
-        print(f"  Training samples: {self.training_samples}")
-        print(f"  Parameters: {list(self.calibration_params.keys())}")
+        if verbose >= 1:
+            logger.info(f"✓ Calibrator loaded from {filename}")
+            logger.info(f"  Method: Distribution matching")
     
+
     def save_statistics(self, filename='calibration_stats.json'):
         """
         Save calibration statistics to JSON file.
@@ -318,6 +369,7 @@ class ForecastCalibrator:
         
         print(f"\n✓ Statistics saved to {filename}")
     
+
     def get_summary(self):
         """
         Get a summary of calibration performance.
@@ -346,6 +398,7 @@ class ForecastCalibrator:
         
         return summary
     
+
     def print_summary(self):
         """Print a formatted summary of calibration performance."""
         
@@ -368,6 +421,12 @@ class ForecastCalibrator:
             print(f"  Bias: {stats['bias_original']:.3f} → {stats['bias_calibrated']:.3f}")
 
 
+
+
+
+#=====================================================================
+# Suplementary Code
+#=====================================================================
 def load_data(filepath):
     """
     Load weather data from CSV file.
@@ -396,6 +455,7 @@ def main():
     print("Distribution Matching Method")
     print("=" * 70)
     
+    '''
     # Train calibrator
     print("\n### Training Calibrator ###\n")
     
@@ -421,9 +481,9 @@ def main():
         print("  1. historical_forecast.csv - Past forecast data")
         print("  2. historical_actual.csv - Actual measured data")
         print("\nBoth files must have matching 'date' and 'hour' columns.")
-    
-    # Example 2: Use trained calibrator
-    ''' 
+    '''
+        
+    # Example 2: Use trained calibrator 
     print("\n\n### Testing Calibration ###\n")
     
     try:
@@ -432,13 +492,13 @@ def main():
         calibrator.load('calibrator.pkl')
         
         # Load new forecast
-        new_forecast = load_data('tomorrow_forecast.csv')
+        new_forecast = load_data('test/tomorrow_forecast.csv')
         
         # Apply calibration
-        calibrated_forecast = calibrator.calibrate(new_forecast)
+        calibrated_forecast = calibrator.calibrate(new_forecast, verbose=2)
         
         # Save calibrated forecast
-        calibrated_forecast.to_csv('calibrated_forecast.csv', index=False)
+        calibrated_forecast.to_csv('test/calibrated_forecast.csv', index=False)
         print("\n✓ Calibrated forecast saved to 'calibrated_forecast.csv'")
         
         # Show summary
@@ -457,7 +517,7 @@ def main():
     print("\n" + "=" * 70)
     print("Done!")
     print("=" * 70)
-    '''
+    
 
 
 if __name__ == "__main__":

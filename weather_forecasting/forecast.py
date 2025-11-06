@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 import sys
 import os
 import argparse
+import logging
 
 # Dynamically add directories to sys.path
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -36,8 +37,24 @@ except ImportError as e:
     print(f"  - {calibrator_dir}/calibrator.py")
     sys.exit(1)
 
-calibrator_path_standard = f"{calibrator_dir}/calibrator.py"
-def apply_calibration(forecast_df, calibrator_path=calibrator_path_standard):
+
+# Configure logging
+logger = logging.getLogger("forecast")
+logger.setLevel(logging.INFO)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+formatter = logging.Formatter("WEATHER FORECAST - %(levelname)s - %(message)s")
+ch.setFormatter(formatter)
+
+# Add handler if it hasn't been added yet
+if not logger.hasHandlers():
+    logger.addHandler(ch)
+
+
+calibrator_path_standard = f"{calibrator_dir}/calibrator.pkl"
+def apply_calibration(forecast_df, verbose=1, calibrator_path=calibrator_path_standard):
     """
     Apply calibration to forecast data using trained calibrator.
     
@@ -50,29 +67,37 @@ def apply_calibration(forecast_df, calibrator_path=calibrator_path_standard):
     """
     
     if not os.path.exists(calibrator_path):
-        print(f"\n⚠ Warning: Calibrator not found at '{calibrator_path}'")
-        print("Skipping calibration step. To use calibration:")
-        print("  1. Train a calibrator using forecast_calibration.py")
-        print("  2. Save it to the specified path")
+        logger.warning(f"\n⚠ Warning: Calibrator not found at '{calibrator_path}'")
+        logger.warning("Skipping calibration step. To use calibration:")
+        logger.warning("  1. Train a calibrator using forecast_calibration.py")
+        logger.warning("  2. Save it to the specified path")
         return forecast_df
     
     try:        
         # Load and apply calibrator
-        calibrator = ForecastCalibrator()
-        calibrator.load(calibrator_path)
+        # 1) Load Calibrator
+        try:
+            calibrator = ForecastCalibrator()
+            calibrator.load(calibrator_path, verbose = verbose)
+        except Exception as e:
+            raise RuntimeError(f"Error loading calibrator ... \n\t Calibrator Path: {calibrator_path} \n\t Error: {e}")
+        # 2) Apply Calibrator
+        try:
+            calibrated_df = calibrator.calibrate(forecast_df, verbose=0)
+        except Exception as e:
+            raise RuntimeError(f"Error appling calibrator: {e}")
         
-        calibrated_df = calibrator.calibrate(forecast_df)
-        
-        print("\n✓ Calibration completed")
+        if verbose >=1: 
+            logger.info("✓ Calibration completed")
         return calibrated_df
         
     except Exception as e:
-        print(f"\n⚠ Warning: Calibration failed: {e}")
-        print("Continuing with uncalibrated forecast")
+        logger.warning(f"\n⚠ Warning: Calibration failed: {e}")
+        logger.warning("Continuing with uncalibrated forecast")
         return forecast_df
 
 
-def post_process(df):
+def post_process(df, verbose=1):
     """
     Apply post-processing corrections to ensure physical constraints.
     
@@ -80,16 +105,17 @@ def post_process(df):
     1. Irradiance: Set to 0 if negative (no negative solar radiation)
     2. Rain: Set to 0 if negative (no negative precipitation)
     3. Wind velocity: Set to 0 if negative (no negative speed)
+    4. Round all numeric columns (except datetime, hour, day, month) to 2 decimals
     
     Args:
         df: DataFrame with forecast data
+        verbose: verbose level
     
     Returns:
         DataFrame: Post-processed forecast data
     """
     
     df_processed = df.copy()
-    corrections_made = False
     
     # 1. Irradiance: set negative values to 0
     if 'irradiance' in df_processed.columns:
@@ -97,34 +123,39 @@ def post_process(df):
         num_corrections = mask.sum()
         if num_corrections > 0:
             df_processed.loc[mask, 'irradiance'] = 0
-            corrections_made = True
-            print(f"✓ Irradiance: Corrected {num_corrections} negative values to 0")
+            if verbose >=1: 
+                logger.info(f"✓ Irradiance: Corrected {num_corrections} negative values to 0")
     
-    # 4. Rain: set negative values to 0
+    # 2. Rain: set negative values to 0
     if 'rain' in df_processed.columns:
         mask = df_processed['rain'] < 0
         num_corrections = mask.sum()
         if num_corrections > 0:
             df_processed.loc[mask, 'rain'] = 0
-            corrections_made = True
-            print(f"✓ Rain: Corrected {num_corrections} negative values to 0")
+            if verbose >=1: 
+                logger.info(f"✓ Rain: Corrected {num_corrections} negative values to 0")
     
-    # 4. Wind velocity: set negative values to 0
+    # 3. Wind velocity: set negative values to 0
     if 'wind_velocity' in df_processed.columns:
         mask = df_processed['wind_velocity'] < 0
         num_corrections = mask.sum()
         if num_corrections > 0:
             df_processed.loc[mask, 'wind_velocity'] = 0
-            corrections_made = True
-            print(f"✓ Wind velocity: Corrected {num_corrections} negative values to 0")
+            if verbose >=1: 
+                logger.info(f"✓ Wind velocity: Corrected {num_corrections} negative values to 0")
     
-    if not corrections_made:
-        print("✓ No corrections needed - all values within physical constraints")
+    # 4. Round numeric columns (except datetime, hour, day, month)
+    exclude_cols = ['datetime', 'hour', 'day', 'month']
+    numeric_cols = df_processed.select_dtypes(include='number').columns
+    round_cols = [col for col in numeric_cols if col not in exclude_cols]
+
+    if round_cols:
+        df_processed[round_cols] = df_processed[round_cols].round(2)
     
     return df_processed
 
 
-def save_forecast(df, filename='weather_forecast.csv'):
+def save_csv(df, filename='tomorrow_forecast.csv'):
     """
     Save forecast to CSV file.
     
@@ -138,60 +169,99 @@ def save_forecast(df, filename='weather_forecast.csv'):
     
     try:
         df.to_csv(filename, index=False)
-        print(f"\n✓ Forecast saved to '{filename}'")
-        print(f"  Records: {len(df)}")
-        print(f"  Date: {df['date'].iloc[0]}")
+        logger.info(f"✓ Forecast saved to '{filename}'")
+        logger.info(f"  Records: {len(df)}")
         return True
     except Exception as e:
-        print(f"\n✗ Error saving forecast: {e}", file=sys.stderr)
+        logger.error(f"✗ Error saving forecast: {e}", file=sys.stderr)
         return False
 
 
-def weather_forecast(latitude = 46.09564, longitude=11.10136):
-    """Main pipeline function."""
+def weather_forecast(latitude = 46.09564, longitude=11.10136, verbose=1):
+    """
+    All forecast pipeline
     
-    print("=" * 70)
-    print("WEATHER FORECAST")
-    print("=" * 70)
-    print(f"\nLocation: Lat {latitude}, Lon {longitude}")
-    print(f"Date: {(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')}")
+    Args:
+        latitude: Location latitude
+        longitude: Location longitude
+        verbose (int): Verbosity level:
+            0 - No output
+            1 - Summary only
+            2 - Detailed output for each step
+            3 - Save csv file for each step
+    
+    Returns:
+        pd.DataFrame: calibrated & post-processed forecast data.
+    """
+    
+    if verbose >=1:
+        logger.info("=" * 70)
+        logger.info("WEATHER FORECAST")
+        logger.info("=" * 70)
+        logger.info(f"Location: Lat {latitude}, Lon {longitude}")
+        logger.info(f"Date: {(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')}")
     
     # STEP 1: Fetch forecast
-    print("\n" + "=" * 70)
-    print("STEP 1: Fetching Forecast")
-    print("=" * 70)
-    forecast_df = fetch_weather_forecast(latitude, longitude)
+    if verbose >= 2:
+        print('')
+        logger.info("=" * 70)
+        logger.info("STEP 1: Fetching Forecast")
+        logger.info("=" * 70)
+    forecast_df = fetch_weather_forecast(latitude, longitude, verbose)
     
-    if forecast_df is None:
-        print("\n✗ Pipeline failed: Could not fetch forecast data")
+    if forecast_df is not None:
+        if verbose >= 2:
+            print('')
+            logger.info("Forecast DataFrame preview:")
+            print(forecast_df.head())
+    else:
+        logger.error("✗ No forecast data returned")
         return 1
     
     # STEP 2: Apply calibration (if not skipped)
-    print("\n" + "=" * 70)
-    print("STEP 2: Applying Calibration")
-    print("=" * 70)
-    forecast_df = apply_calibration(forecast_df)
+    if verbose >= 2:
+        print('\n')
+        logger.info("=" * 70)
+        logger.info("STEP 2: Applying Calibration")
+        logger.info("=" * 70)
+    calibrated_forecast_df = apply_calibration(forecast_df, verbose = verbose)
    
     # STEP 3: Post-processing
-    print("\n" + "=" * 70)
-    print("STEP 3: Post-Processing")
-    print("=" * 70)
-    forecast_df = post_process(forecast_df)
+    if verbose >= 2:
+        print('\n')
+        logger.info("=" * 70)
+        logger.info("STEP 3: Post-Processing")
+        logger.info("=" * 70)
+    fine_forecast_df = post_process(calibrated_forecast_df, verbose=verbose)
+
+    if verbose == 3:
+        print('\n')
+        logger.info("=" * 70)
+        logger.info("Save All Intermiadiate Steps")
+        save_csv(forecast_df, 'raw_tomorrow_forecast.csv')
+        save_csv(calibrated_forecast_df, 'calibrated_tomorrow_forecast.csv')
+        save_csv(fine_forecast_df, 'fine_tomorrow_forecast.csv')
+        logger.info("=" * 70)
     
-    return forecast_df
+    return fine_forecast_df
+
+
+
+
+
+#=====================================================================
+# Suplementary Code
+#=====================================================================
 
 def main():
     LATITUDE = 46.09564
     LONGITUDE = 11.10136
-    OUTPUT = ""
 
-    forecast = weather_forecast(LATITUDE, LONGITUDE)
-    success = save_forecast(forecast, OUTPUT)
+    forecast = weather_forecast(LATITUDE, LONGITUDE, verbose=0)
 
     print("\n" + "=" * 70)
     print("✓ PIPELINE COMPLETED SUCCESSFULLY!")
     print("=" * 70)
-    print(f"\nFinal forecast available in: {OUTPUT}")
 
 
 if __name__ == "__main__":   

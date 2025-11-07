@@ -6,10 +6,10 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, m
 # Paths to CSV files
 pred_csv = "test_predictions.csv"  # CSV with predicted_power
 truth_csv = "../dataset/train_test_split/y_test.csv"  # CSV with actual_power
-output_dir = "v2"  # save report in same folder
+output_dir = "r-v1"  # save report in same folder
 
 # Load CSVs
-df_pred = pd.read_csv(pred_csv)
+df_pred = pd.read_csv(output_dir + '/' + pred_csv)
 df_truth = pd.read_csv(truth_csv)
 
 # Check columns

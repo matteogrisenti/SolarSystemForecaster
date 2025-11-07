@@ -27,12 +27,19 @@ def main():
     print("\n" + "="*60)
     print("Predict from calibrated_historical_forecast CSV File")
     print("="*60)
+
+    output_path='test_predictions.csv'
     
     results = estimator.predict_from_csv(
          csv_path='calibrated_historical_forecast.csv',
-         output_path='test_predictions.csv'
+         output_path=output_path
     )
-    print(results.head())
+
+    # Open the CSV, round 'predict_power' to 2 decimal places, and save it again
+    df = pd.read_csv(output_path)
+    if 'predicted_power' in df.columns:
+        df['predicted_power'] = df['predicted_power'].round(1)
+        df.to_csv(output_path, index=False)
     
     print("\n" + "="*60)
     print("Examples completed successfully!")

@@ -1,33 +1,298 @@
 ======================================================================
-FEEDFORWARD NEURAL NETWORK - HOURLY PREDICTION EVALUATION
+HOURLY PREDICTION EVALUATION - ALL HOURS
 ======================================================================
 Number of aligned samples: 8586
-MSE:  349.1012
-RMSE: 18.6843
-MAE:  9.3997
-R²:   0.6802
-Max Error: 117.9102
-Min Error: 0.0004
-Mean Percentage Error: 2856438163.25%
+MSE:  314.1318
+RMSE: 17.7238
+MAE:  8.7966
+R²:   0.7122
+Max Error: 117.1000
+Min Error: 0.0000
+Mean Percentage Error: 2614372321.09%
 ----------------------------------------------------------------------
 Prediction Accuracy within Thresholds:
-  Within 5%: 3.40%
-  Within 10%: 6.55%
-  Within 20%: 11.60%
+  Within 5%: 34.13%
+  Within 10%: 37.49%
+  Within 20%: 42.73%
 ======================================================================
-FEEDFORWARD NEURAL NETWORK - DAILY PREDICTION EVALUATION (SUMS)
+
+
+HOURLY PREDICTION EVALUATION - NONZERO GROUND TRUTH
+======================================================================
+Number of aligned nonzero samples: 4220
+MSE:  599.6111
+RMSE: 24.4870
+MAE:  17.3656
+R²:   0.5759
+Max Error: 111.0000
+Min Error: 0.0000
+Mean Percentage Error: 177.47%
+----------------------------------------------------------------------
+Prediction Accuracy within Thresholds:
+  Within 5%: 7.68%
+  Within 10%: 14.53%
+  Within 20%: 25.19%
+======================================================================
+
+
+PER-HOUR METRICS (EXCLUDING ZERO PRODUCTION HOURS)
+======================================================================
+Hour 06:
+  MSE:  2.2529
+  RMSE: 1.5010
+  MAE:  1.2676
+  R²:   -2.4534
+  Max Error: 4.2000
+  Min Error: 0.0000
+  Mean Percentage Error: 86.67%
+  Accuracy within thresholds:
+    Within 5%: 2.94%
+    Within 10%: 2.94%
+    Within 20%: 2.94%
+----------------------------------------
+
+
+Hour 07:
+  MSE:  47.2508
+  RMSE: 6.8739
+  MAE:  4.9478
+  R²:   -0.1442
+  Max Error: 20.5000
+  Min Error: 0.0000
+  Mean Percentage Error: 72.30%
+  Accuracy within thresholds:
+    Within 5%: 2.20%
+    Within 10%: 2.20%
+    Within 20%: 7.14%
+----------------------------------------
+
+
+Hour 08:
+  MSE:  185.0292
+  RMSE: 13.6025
+  MAE:  9.0406
+  R²:   0.3344
+  Max Error: 46.6000
+  Min Error: 0.0000
+  Mean Percentage Error: 87.46%
+  Accuracy within thresholds:
+    Within 5%: 3.10%
+    Within 10%: 4.64%
+    Within 20%: 7.74%
+----------------------------------------
+
+
+Hour 09:
+  MSE:  417.8698
+  RMSE: 20.4419
+  MAE:  14.5862
+  R²:   0.4561
+  Max Error: 71.2000
+  Min Error: 0.0000
+  Mean Percentage Error: 71.54%
+  Accuracy within thresholds:
+    Within 5%: 2.25%
+    Within 10%: 5.07%
+    Within 20%: 15.77%
+----------------------------------------
+
+
+Hour 10:
+  MSE:  557.5325
+  RMSE: 23.6121
+  MAE:  17.2929
+  R²:   0.5557
+  Max Error: 91.4000
+  Min Error: 0.0000
+  Mean Percentage Error: 66.19%
+  Accuracy within thresholds:
+    Within 5%: 5.95%
+    Within 10%: 17.28%
+    Within 20%: 32.29%
+----------------------------------------
+
+
+Hour 11:
+  MSE:  650.6746
+  RMSE: 25.5083
+  MAE:  19.2351
+  R²:   0.5165
+  Max Error: 87.9000
+  Min Error: 0.0000
+  Mean Percentage Error: 93.01%
+  Accuracy within thresholds:
+    Within 5%: 13.03%
+    Within 10%: 23.23%
+    Within 20%: 41.64%
+----------------------------------------
+
+
+Hour 12:
+  MSE:  715.7128
+  RMSE: 26.7528
+  MAE:  19.4734
+  R²:   0.4882
+  Max Error: 84.1000
+  Min Error: 0.0000
+  Mean Percentage Error: 82.86%
+  Accuracy within thresholds:
+    Within 5%: 16.43%
+    Within 10%: 28.61%
+    Within 20%: 47.03%
+----------------------------------------
+
+
+Hour 13:
+  MSE:  797.6634
+  RMSE: 28.2429
+  MAE:  19.0251
+  R²:   0.4383
+  Max Error: 111.0000
+  Min Error: 0.1000
+  Mean Percentage Error: 66.73%
+  Accuracy within thresholds:
+    Within 5%: 24.51%
+    Within 10%: 38.59%
+    Within 20%: 51.55%
+----------------------------------------
+
+
+Hour 14:
+  MSE:  792.7617
+  RMSE: 28.1560
+  MAE:  21.3735
+  R²:   0.4384
+  Max Error: 84.9000
+  Min Error: 0.2000
+  Mean Percentage Error: 165.21%
+  Accuracy within thresholds:
+    Within 5%: 11.27%
+    Within 10%: 24.79%
+    Within 20%: 38.31%
+----------------------------------------
+
+
+Hour 15:
+  MSE:  1046.8990
+  RMSE: 32.3558
+  MAE:  25.4031
+  R²:   0.2062
+  Max Error: 91.1000
+  Min Error: 0.1000
+  Mean Percentage Error: 226.85%
+  Accuracy within thresholds:
+    Within 5%: 5.06%
+    Within 10%: 13.20%
+    Within 20%: 26.40%
+----------------------------------------
+
+
+Hour 16:
+  MSE:  896.4000
+  RMSE: 29.9399
+  MAE:  23.9754
+  R²:   -0.0217
+  Max Error: 104.8000
+  Min Error: 0.3000
+  Mean Percentage Error: 445.77%
+  Accuracy within thresholds:
+    Within 5%: 2.83%
+    Within 10%: 5.67%
+    Within 20%: 12.46%
+----------------------------------------
+
+
+Hour 17:
+  MSE:  914.9990
+  RMSE: 30.2490
+  MAE:  25.3728
+  R²:   -1.3721
+  Max Error: 70.4000
+  Min Error: 0.0000
+  Mean Percentage Error: 473.64%
+  Accuracy within thresholds:
+    Within 5%: 1.47%
+    Within 10%: 3.68%
+    Within 20%: 8.82%
+----------------------------------------
+
+
+Hour 18:
+  MSE:  429.8099
+  RMSE: 20.7319
+  MAE:  16.3316
+  R²:   -2.1947
+  Max Error: 57.0000
+  Min Error: 0.1000
+  Mean Percentage Error: 407.95%
+  Accuracy within thresholds:
+    Within 5%: 1.30%
+    Within 10%: 3.90%
+    Within 20%: 9.52%
+----------------------------------------
+
+
+Hour 19:
+  MSE:  185.5384
+  RMSE: 13.6212
+  MAE:  9.9064
+  R²:   -11.9209
+  Max Error: 46.7000
+  Min Error: 0.0000
+  Mean Percentage Error: 214.73%
+  Accuracy within thresholds:
+    Within 5%: 2.91%
+    Within 10%: 4.65%
+    Within 20%: 10.47%
+----------------------------------------
+
+
+Hour 20:
+  MSE:  4.5737
+  RMSE: 2.1386
+  MAE:  1.6717
+  R²:   -1.3895
+  Max Error: 4.8000
+  Min Error: 0.0000
+  Mean Percentage Error: 78.65%
+  Accuracy within thresholds:
+    Within 5%: 3.33%
+    Within 10%: 5.83%
+    Within 20%: 12.50%
+----------------------------------------
+
+
+Hour 21:
+  MSE:  0.0300
+  RMSE: 0.1732
+  MAE:  0.1316
+  R²:   -2.0593
+  Max Error: 0.4000
+  Min Error: 0.0000
+  Mean Percentage Error: 46.32%
+  Accuracy within thresholds:
+    Within 5%: 21.05%
+    Within 10%: 21.05%
+    Within 20%: 21.05%
+----------------------------------------
+
+
+DAILY PREDICTION EVALUATION (SUMS)
 ======================================================================
 Number of days evaluated: 359
-MSE:  23128.2220
-RMSE: 152.0797
-MAE:  108.2200
-R²:   0.6975
-Max Error: 757.2947
-Min Error: 0.0493
-Mean Percentage Error: 9554401613.02%
+MSE:  19316.7183
+RMSE: 138.9846
+MAE:  95.4557
+R²:   0.7474
+Max Error: 696.9000
+Min Error: 0.0000
+Mean Percentage Error: 9501392793.54%
 ----------------------------------------------------------------------
+
+
 Prediction Accuracy within Thresholds (Daily Sums):
-  Within 5%: 14.48%
-  Within 10%: 27.86%
-  Within 20%: 54.32%
+  Within 5%: 20.06%
+  Within 10%: 38.72%
+  Within 20%: 57.38%
 ======================================================================
+

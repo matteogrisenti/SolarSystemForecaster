@@ -246,7 +246,7 @@ class ForecastCalibrator:
             if len(values) == 0:
                 continue
 
-             # Ensure the column is float
+            # Ensure the column is float
             if not np.issubdtype(calibrated_df[param].dtype, np.floating):
                 calibrated_df[param] = calibrated_df[param].astype(float)
 

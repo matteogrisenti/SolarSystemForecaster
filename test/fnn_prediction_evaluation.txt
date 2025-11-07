@@ -1,0 +1,33 @@
+======================================================================
+FEEDFORWARD NEURAL NETWORK - HOURLY PREDICTION EVALUATION
+======================================================================
+Number of aligned samples: 8586
+MSE:  349.1012
+RMSE: 18.6843
+MAE:  9.3997
+R²:   0.6802
+Max Error: 117.9102
+Min Error: 0.0004
+Mean Percentage Error: 2856438163.25%
+----------------------------------------------------------------------
+Prediction Accuracy within Thresholds:
+  Within 5%: 3.40%
+  Within 10%: 6.55%
+  Within 20%: 11.60%
+======================================================================
+FEEDFORWARD NEURAL NETWORK - DAILY PREDICTION EVALUATION (SUMS)
+======================================================================
+Number of days evaluated: 359
+MSE:  23128.2220
+RMSE: 152.0797
+MAE:  108.2200
+R²:   0.6975
+Max Error: 757.2947
+Min Error: 0.0493
+Mean Percentage Error: 9554401613.02%
+----------------------------------------------------------------------
+Prediction Accuracy within Thresholds (Daily Sums):
+  Within 5%: 14.48%
+  Within 10%: 27.86%
+  Within 20%: 54.32%
+======================================================================

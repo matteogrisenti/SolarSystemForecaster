@@ -5,6 +5,8 @@
 /dataset/dataset.csv
 /dataset/train_test_split
 
+/test/groundtruth.csv
+
 .env
 /.venv
 **/__pycache__/

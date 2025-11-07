@@ -196,6 +196,7 @@ def generate_report(actual_file, forecast_file, output_file='forecast_quality_re
 if __name__ == "__main__":
     # Replace these with your actual file paths
     actual_file = 'historical_actual.csv'
-    forecast_file = 'historical_forecast.csv'
+    # forecast_file = 'historical_forecast.csv'
+    forecast_file = 'calibrated_historical_forecast.csv'
     
-    generate_report(actual_file, forecast_file)
+    generate_report(actual_file, forecast_file, output_file='calibrated_postprocesse_forecast_quality_report.txt')

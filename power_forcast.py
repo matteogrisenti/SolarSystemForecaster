@@ -110,7 +110,12 @@ class SolarPowerPredictor:
             
             logger.info("Calculating power estimation...")
             estimated_power = self.estimator.predict(data=tomorrow_weather_forecast)
-            
+
+            # Round to 2 decimals and set values below 0.1 to 0
+            estimated_power = [
+                round(p, 2) if p >= 0.1 else 0 for p in estimated_power
+            ]
+
             result = {
                 'estimated_power': estimated_power,
                 'forecast_data': tomorrow_weather_forecast,
@@ -143,7 +148,7 @@ def export_to_csv(data: pd.DataFrame, output_path: str) -> None:
         output_file.parent.mkdir(parents=True, exist_ok=True)
         
         # Export to CSV
-        data.to_csv(output_path, index=False, float_format='%.4f')
+        data.to_csv(output_path, index=False, float_format='%.2f')
         logger.info(f"Data successfully exported to: {output_path}")
         logger.info(f"Total records written: {len(data)}")
         

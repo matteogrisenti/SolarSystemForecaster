@@ -1,9 +1,9 @@
 # Private Data of the Company 
-/dataset/solar_system_data/raw
-/dataset/solar_system_data/solar_power_data.csv
-/dataset/solar_system_data/power_data_inspection.txt
-/dataset/dataset.csv
-/dataset/train_test_split
+FFN/dataset/solar_system_data/raw
+FFN/dataset/solar_system_data/solar_power_data.csv
+FFN/dataset/solar_system_data/power_data_inspection.txt
+FFN/dataset/dataset.csv
+FFN/dataset/train_test_split
 
 /test/groundtruth.csv
 

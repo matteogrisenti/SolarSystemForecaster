@@ -1,7 +1,7 @@
 import pandas as pd
 
 # === USER INPUTS ===
-input_file = "../dataset/dataset.csv"     # Path to your source CSV
+input_file = "../FFN/dataset/dataset.csv"     # Path to your source CSV
 output_file = "groundtruth.csv"           # Path to save filtered CSV
 
 start_datetime = "2024-11-04 00:00:00"

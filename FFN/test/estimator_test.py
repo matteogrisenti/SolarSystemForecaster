@@ -88,7 +88,7 @@ def main():
     print("="*60)
     
     results = estimator.predict_from_csv(
-         csv_path='../../dataset/train_test_split/X_test.csv',
+         csv_path='../dataset/train_test_split/X_test.csv',
          output_path='test_predictions.csv'
     )
     print(results.head())

@@ -1,7 +1,7 @@
 import pandas as pd
 
 # --- Configuration ---
-input_file = "../../dataset/weather_data/weather_data.csv"  # your input CSV file
+input_file = "../../FFN/dataset/weather_data/weather_data.csv"  # your input CSV file
 output_file = "historical_actual.csv"        # filtered output CSV file
 start_datetime = "2024-11-04 00:00:00"  # start of the datetime range
 end_datetime = "2025-10-28 00:00:00"    # end of the datetime range

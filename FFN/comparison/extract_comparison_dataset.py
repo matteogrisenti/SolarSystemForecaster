@@ -1,7 +1,7 @@
 import pandas as pd
 
 # === CONFIGURATION ===
-input_csv = "../../dataset/dataset.csv"       # Path to your source CSV
+input_csv = "../dataset/dataset.csv"       # Path to your source CSV
 output_csv = "filtered.csv"   # Path to save filtered CSV
 datetime_column = "datetime"  # Name of the datetime column in your CSV
 

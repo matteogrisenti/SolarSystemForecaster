@@ -36,8 +36,8 @@ class SolarPowerEstimator:
         Initialize the Solar Power Estimator.
         """
         base_dir = os.path.dirname(__file__)  # folder containing FFN_estimator.py
-        self.model_path = os.path.join(base_dir, 'train/fnn_solar_final.h5')
-        self.scaler_path = os.path.join(base_dir, '../dataset/scaler.pkl')
+        self.model_path = os.path.join(base_dir, 'train/v2/fnn_solar_final.h5')
+        self.scaler_path = os.path.join(base_dir, 'dataset/scaler.pkl')
 
         self.model = None
         self.scaler = None
@@ -215,6 +215,8 @@ class SolarPowerEstimator:
                     f"Missing required parameter(s): {', '.join(missing_params)}. "
                     f"Either provide all individual parameters or use the 'data' parameter."
                 )
+            
+            X = pd.DataFrame([params_dict])
         
         # Scale the input
         X_scaled = self.scaler.transform(X)
